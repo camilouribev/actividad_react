@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 
 export function Form() {
   const { register, handleSubmit } = useForm();
-  const [result, setResult] = useState([""]);
+  const [result, setResult] = useState([]);
 
   const ACTITUD_ESTUDIANTE = "la perseverancia";
   const ACTITUD_JUBILADO = "la solidaridad";
@@ -11,7 +11,7 @@ export function Form() {
   const ACTITUDES_MAYOR = "la paciencia, la sabiduría y ";
   const ACTITUDES_ADULTO = "la responsabilidad, la solidaridad y ";
   const ACTITUDES_JOVEN = "la paciencia, el autocuidado y ";
-  const ACTITUDES_NIÑO = "la alegría, la curiosidad y";
+  const ACTITUDES_NIÑO = "la alegría, la curiosidad y ";
 
   function mensajeOcupacion(data) {
     if (data.Ocupacion === "Estudiante") {
@@ -56,33 +56,62 @@ export function Form() {
       data.Ocupacion;
   }
 
-  const onSubmit = (data) => {
+  const onSubmit = (data, e) => {
+    if (
+      data === null ||
+      data === "undefined" ||
+      data.Edad < 0 ||
+      data.Edad > 120 ||
+      isNaN(data.Edad)
+    ) {
+      alert("Ingrese valor de edad válido");
+      return;
+    }
+
+    if (data.Nombre === "" || data.Edad === "") {
+      alert("Ingrese un nombre con una edad");
+      return;
+    }
+
     asignarCategoria(data);
     mensajeOcupacion(data);
     imprimirMensaje(data);
-    console.log(data);
     setResult([...result, data]);
+    e.target.reset();
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <label>Nombre: </label>
-      <input {...register("Nombre")} placeholder="Nombre" />
-      <br></br>
-      <label>Edad: </label>
-      <input {...register("Edad")} placeholder="Edad" />
-      <br></br>
-      <label>Ocupación: </label>
-      <select {...register("Ocupacion")}>
-        <option value="Estudiante">Estudiante</option>
-        <option value="Empleado">Empleado</option>
-        <option value="Jubilado">Jubilado</option>
-      </select>
-      <br></br>
-      <input type="submit" />
-      <p>{result[result.length - 1].Mensaje}</p>
+    <div>
+      <form className="form" onSubmit={handleSubmit(onSubmit)}>
+        <h1> Recomendaciones para todos </h1>
+        <p>
+          Escriba la infomación a continuación para recibir su recomendación
+        </p>
+        <div className="contenedor_inputs">
+          <div className="input">
+            <label>Nombre: </label>
+            <input {...register("Nombre")} placeholder="Nombre" />
+          </div>
+          <div className="input">
+            <label>Edad: </label>
+            <input {...register("Edad")} placeholder="Edad" />
+          </div>
+          <div className="input">
+            <label>Ocupación: </label>
+            <select {...register("Ocupacion")}>
+              <option value="Estudiante">Estudiante</option>
+              <option value="Empleado">Empleado</option>
+              <option value="Jubilado">Jubilado</option>
+            </select>
+          </div>
+        </div>
+        <br></br>
+        <div className="button">
+          <input type="submit" />
+        </div>
+      </form>
 
-      <table className="default">
+      <table className="default tabla">
         <thead>
           <tr>
             <th>Nombre</th>
@@ -106,6 +135,6 @@ export function Form() {
           })}
         </tbody>
       </table>
-    </form>
+    </div>
   );
 }
